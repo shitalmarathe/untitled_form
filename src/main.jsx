@@ -12,12 +12,6 @@ root.render(
   </React.StrictMode>
 );
 
-function Watch() {
-  return (
-    <h1 className="text-6xl text-red-500 bg-blue-300 p-3 w-fit rounded-lg">
-      ⌚ This is a watch.
-    </h1>
-  );
-}
+
 
 
