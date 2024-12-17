@@ -1,36 +1,44 @@
 import { useState } from "react";
 import Intro from "@/components/Intro";
-import {TbFlareFilled} from "react-icons/tb";
+import { TbFlareFilled } from "react-icons/tb";
+
+const services = [
+  "Website Design",
+  "Content",
+  "UX Design",
+  "Strategy",
+  "User Research",
+  "Other",
+];
 
 function Form() {
-const services = [
-    "Website Design",
-    "Content",
-    "UX Design",
-    "Strategy",
-    "User Research",
-    "Other",
-  ];
+  const [formData, setFormData] = useState({
+    fullname: "",
+    email: "",
+    message: "",
+  });
 
-      const [ formData, setFormData] = useState({
-        fullname :"",
-        email: "",
-        message : ""
-      });
+  const [activeServices, setActiveServices] = useState([]);
 
-      const handleChange = (value,feild) =>{
-        setFormData({...formData,[feild]: value });
-      };
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-      const handleSubmit=(e)=>{
-        e.preventDefault();
+    console.log(formData);
+    console.log(activeServices);
+  };
+  const handleChange = (value, field) => {
+    setFormData({ ...formData, [field]: value });
+  };
+  const handleCheckbox = (status, service) => {
+    setActiveServices((prevState) =>
+      status ? [...prevState, service] : prevState.filter((v) => v !== service),
+    );
+  };
 
-        console.log(formData);
-      }
-        return (
-        <>
-        <Intro />
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+  return (
+    <>
+      <Intro />
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
         {/* Inputs */}
         <input
           type="text"
@@ -38,11 +46,10 @@ const services = [
           id="fullname"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="Your name"
-          autoComplete="off"
           value={formData.fullname}
           onChange={(e) => handleChange(e.target.value, "fullname")}
-
         />
+
         <input
           type="email"
           name="email"
@@ -72,7 +79,12 @@ const services = [
                 key={service + index}
                 className="flex cursor-pointer items-center gap-2"
               >
-                <input type="checkbox" name="services" className="size-5" />{" "}
+                <input
+                  type="checkbox"
+                  name="services"
+                  className="size-5"
+                  onChange={(e) => handleCheckbox(e.target.checked, service)}
+                />{" "}
                 {service}
               </label>
             );
@@ -81,13 +93,13 @@ const services = [
 
         <button
           type="submit"
-          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-950 p-1 text-white md:p-2">
+          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-950 p-1 text-white md:p-2"
+        >
           Let's get started <TbFlareFilled className="text-lime-400" />
         </button>
       </form>
     </>
   );
 }
-   
- 
-export default Form ;
+
+export default Form;
