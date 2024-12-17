@@ -1,4 +1,6 @@
-import {TbNorthStar ,TbFlareFilled} from "react-icons/tb";
+import { useState } from "react";
+import Intro from "@/components/Intro";
+import {TbFlareFilled} from "react-icons/tb";
 
 function Form() {
 const services = [
@@ -10,18 +12,25 @@ const services = [
     "Other",
   ];
 
-  return (
-    <>
-      <h1 className="max-w-96 text-3xl font-semibold">
-        Got Ideas?{" "}
-        <TbNorthStar className="inline-block text-lime-500 md:text-black" />
-        We've got the skills. Let's team up.
-      </h1>
-      <p className="my-6 text-xl">
-        Tell us more about yourself and what's on your mind.
-      </p>
+      const [ formData, setFormData] = useState({
+        fullname :"",
+        email: "",
+        message : ""
+      });
 
-      <form className="flex flex-col gap-2">
+      const handleChange = (value,feild) =>{
+        setFormData({...formData,[feild]: value });
+      };
+
+      const handleSubmit=(e)=>{
+        e.preventDefault();
+
+        console.log(formData);
+      }
+        return (
+        <>
+        <Intro />
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
         {/* Inputs */}
         <input
           type="text"
@@ -30,6 +39,8 @@ const services = [
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="Your name"
           autoComplete="off"
+          value={formData.fullname}
+          onChange={(e) => handleChange(e.target.value, "fullname")}
 
         />
         <input
@@ -38,6 +49,8 @@ const services = [
           id="email"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="your@company.com"
+          value={formData.email}
+          onChange={(e) => handleChange(e.target.value, "email")}
         />
         <input
           type="text"
@@ -45,6 +58,8 @@ const services = [
           id="message"
           className="h-24 border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="Tell us a little about your project..."
+          value={formData.message}
+          onChange={(e) => handleChange(e.target.value, "message")}
         />
 
         <p className="my-6 text-gray-700">How can we help?</p>
@@ -66,8 +81,7 @@ const services = [
 
         <button
           type="submit"
-          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-950 p-1 text-white md:p-2"
-        >
+          className="flex items-center justify-center gap-2 rounded-lg bg-zinc-950 p-1 text-white md:p-2">
           Let's get started <TbFlareFilled className="text-lime-400" />
         </button>
       </form>
