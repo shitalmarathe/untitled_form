@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Intro from "@/components/Intro";
 import { TbFlareFilled } from "react-icons/tb";
 
@@ -12,66 +12,78 @@ const services = [
 ];
 
 function Form() {
-  const [formData, setFormData] = useState({
-    fullname: "",
-    email: "",
-    message: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const [activeServices, setActiveServices] = useState([]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log(formData);
-    console.log(activeServices);
-  };
-  const handleChange = (value, field) => {
-    setFormData({ ...formData, [field]: value });
-  };
-  const handleCheckbox = (status, service) => {
-    setActiveServices((prevState) =>
-      status ? [...prevState, service] : prevState.filter((v) => v !== service),
-    );
+  const handleFormSubmit = (value) => {
+    console.log(value);
   };
 
   return (
     <>
       <Intro />
-      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-col gap-2"
+        // onSubmit={handleSubmit(handleFormSubmit)}
+        action="https://docs.google.com/forms/d/e/1FAIpQLSdbQ7D3_gQ4VqLQcwQv9wzzLgCu-_YC9Xu9vXtkqMbehb9NoQ/formResponse"
+      >
         {/* Inputs */}
         <input
           type="text"
-          name="fullname"
           id="fullname"
+          
+          {...register(" entry.1776159433", {
+            required: "Please provide your full name",
+          })}
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="Your name"
-          value={formData.fullname}
-          onChange={(e) => handleChange(e.target.value, "fullname")}
         />
+        {errors.fullname && (
+          <p className="text-red-500">{errors.fullname.message}</p>
+        )}
 
         <input
           type="email"
-          name="email"
           id="email"
+         
+          {...register("entry.40600087", {
+            required: "Email is required",
+            pattern: {
+              value: /^[^@]+@[^@]+\.[^@]+$/,
+              message: "Invalid email address",
+            },
+          })}
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="your@company.com"
-          value={formData.email}
-          onChange={(e) => handleChange(e.target.value, "email")}
         />
+
+
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         <input
           type="text"
-          name="message"
           id="message"
+          {...register("entry.1834869221", {
+            required: "Please provide details about your project",
+            minLength: {
+              value: 5,
+              message: "Message should be at least 5 characters long",
+            },
+          })}
           className="h-24 border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="Tell us a little about your project..."
-          value={formData.message}
-          onChange={(e) => handleChange(e.target.value, "message")}
         />
+        {errors.message && (
+          <p className="text-red-500">{errors.message.message}</p>
+        )}
 
         <p className="my-6 text-gray-700">How can we help?</p>
 
-        {/* Checbox */}
+           {/* Checkbox */}
+
+
         <div className="mb-8 grid grid-cols-2 md:max-w-96">
           {services.map((service, index) => {
             return (
@@ -81,14 +93,19 @@ function Form() {
               >
                 <input
                   type="checkbox"
-                  name="services"
+                  value={service}
+                  {...register("entry.1326072485", {
+                    required: "Select at-least one!",
+                  })}
                   className="size-5"
-                  onChange={(e) => handleCheckbox(e.target.checked, service)}
-                />{" "}
+                />
                 {service}
               </label>
             );
           })}
+          {errors.services && (
+            <p className="text-red-500">{errors.services.message}</p>
+          )}
         </div>
 
         <button
