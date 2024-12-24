@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form";
 import Intro from "@/components/Intro";
 import { TbFlareFilled } from "react-icons/tb";
 
+console.log(import.meta.env.VITE_SUBMIT_URL);
+
 const services = [
   "Website Design",
   "Content",
@@ -18,8 +20,21 @@ function Form() {
     formState: { errors },
   } = useForm();
 
-  const handleFormSubmit = (value) => {
-    console.log(value);
+  const handleFormSubmit = (data) => {
+    console.log(data);
+    console.log(import.meta.env.VITE_SUBMIT_URL);
+
+    const formData = new FormData();
+    formData.append(import.meta.env.VITE_FULLNAME, data.fullname);
+    formData.append(import.meta.env.VITE_EMAIL, data.email);
+    formData.append(import.meta.env.VITE_MESSAGE, data.message);
+    formData.append(import.meta.env.VITE_SERVICES, data.services);
+
+    fetch(import.meta.env.VITE_SUBMIT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData,
+    }).then(() => console.log("Form is submitted!"));
   };
 
   return (
@@ -27,15 +42,13 @@ function Form() {
       <Intro />
       <form
         className="flex flex-col gap-2"
-        // onSubmit={handleSubmit(handleFormSubmit)}
-        action="https://docs.google.com/forms/d/e/1FAIpQLSdbQ7D3_gQ4VqLQcwQv9wzzLgCu-_YC9Xu9vXtkqMbehb9NoQ/formResponse"
+        onSubmit={handleSubmit(handleFormSubmit)}
       >
         {/* Inputs */}
         <input
           type="text"
           id="fullname"
-          
-          {...register(" entry.1776159433", {
+          {...register("fullname", {
             required: "Please provide your full name",
           })}
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
@@ -48,8 +61,7 @@ function Form() {
         <input
           type="email"
           id="email"
-         
-          {...register("entry.40600087", {
+          {...register("email", {
             required: "Email is required",
             pattern: {
               value: /^[^@]+@[^@]+\.[^@]+$/,
@@ -59,13 +71,12 @@ function Form() {
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
           placeholder="your@company.com"
         />
-
-
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+
         <input
           type="text"
           id="message"
-          {...register("entry.1834869221", {
+          {...register("message", {
             required: "Please provide details about your project",
             minLength: {
               value: 5,
@@ -81,9 +92,7 @@ function Form() {
 
         <p className="my-6 text-gray-700">How can we help?</p>
 
-           {/* Checkbox */}
-
-
+        {/* Checkbox */}
         <div className="mb-8 grid grid-cols-2 md:max-w-96">
           {services.map((service, index) => {
             return (
@@ -94,7 +103,7 @@ function Form() {
                 <input
                   type="checkbox"
                   value={service}
-                  {...register("entry.1326072485", {
+                  {...register("services", {
                     required: "Select at-least one!",
                   })}
                   className="size-5"
@@ -103,6 +112,7 @@ function Form() {
               </label>
             );
           })}
+
           {errors.services && (
             <p className="text-red-500">{errors.services.message}</p>
           )}
