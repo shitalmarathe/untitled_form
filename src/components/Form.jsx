@@ -1,8 +1,10 @@
+import {spamCheck, submitToGoogleForms } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Intro from "@/components/Intro";
 import { TbFlareFilled } from "react-icons/tb";
 
-console.log(import.meta.env.VITE_SUBMIT_URL);
+console.log("https://docs.google.com/spreadsheets/d/e/2PACX-1vSYouEE8oOUVzd5x4Y7VfO8LOtB2w5Zed4qrUUZD2248vSvsbZa1IlcWqFaTU_0L1ODT2Ek28P0F57w/pubhtml?gid=2139636629&single=true")
 
 const services = [
   "Website Design",
@@ -14,28 +16,26 @@ const services = [
 ];
 
 function Form() {
+
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const handleFormSubmit = (data) => {
-    console.log(data);
-    console.log(import.meta.env.VITE_SUBMIT_URL);
+  const handleFormSubmit = async (data) => {
+    const spamData = await spamCheck(data.message);
 
-    const formData = new FormData();
-    formData.append(import.meta.env.VITE_FULLNAME, data.fullname);
-    formData.append(import.meta.env.VITE_EMAIL, data.email);
-    formData.append(import.meta.env.VITE_MESSAGE, data.message);
-    formData.append(import.meta.env.VITE_SERVICES, data.services);
+    if (spamData.isProfanity) return navigate("/error");
 
-    fetch(import.meta.env.VITE_SUBMIT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: formData,
-    }).then(() => console.log("Form is submitted!"));
-  };
+    await submitToGoogleForms(data);
+
+    return navigate("/success");
+}
+
+
 
   return (
     <>
@@ -51,7 +51,7 @@ function Form() {
           {...register("fullname", {
             required: "Please provide your full name",
           })}
-          className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
+          className="text-input"
           placeholder="Your name"
         />
         {errors.fullname && (
@@ -68,7 +68,7 @@ function Form() {
               message: "Invalid email address",
             },
           })}
-          className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
+          className="text-input"
           placeholder="your@company.com"
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
@@ -83,7 +83,7 @@ function Form() {
               message: "Message should be at least 5 characters long",
             },
           })}
-          className="h-24 border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
+          className="text-input"
           placeholder="Tell us a little about your project..."
         />
         {errors.message && (
@@ -121,9 +121,11 @@ function Form() {
         <button
           type="submit"
           className="flex items-center justify-center gap-2 rounded-lg bg-zinc-950 p-1 text-white md:p-2"
-        >
+          
+         >
           Let's get started <TbFlareFilled className="text-lime-400" />
         </button>
+       
       </form>
     </>
   );
