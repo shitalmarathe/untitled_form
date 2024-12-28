@@ -57,6 +57,7 @@ function Form() {
         {errors.fullname && (
           <p className="text-red-500">{errors.fullname.message}</p>
         )}
+        
 
         <input
           type="email"
